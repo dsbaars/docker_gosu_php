@@ -1,11 +1,11 @@
-FROM php:5.5-fpm
+FROM php:7.1-fpm
 MAINTAINER Djuri Baars <dsbaars@gmail.com>
 
 COPY bin/* /usr/local/bin/
 RUN mkdir -p /usr/local/etc/php/disabled
 
 # Install useful extensions
-RUN apt-install \
+RUN apt-get update && apt-get install -y  \
       acl \
       curl \
       g++ \
@@ -43,12 +43,12 @@ RUN apt-install \
   && docker-php-ext-install pcntl
   #&& docker-php-ext-install simplexml \
   #&& docker-php-ext-install xml
-RUN docker-php-pecl-install uploadprogress
+RUN pecl install uploadprogress
 
-RUN apt-install zlib1g-dev libicu-dev g++ && \
+RUN apt-get install -y  zlib1g-dev libicu-dev g++ && \
     docker-php-ext-configure intl && \
     docker-php-ext-install intl && \
-    apt-purge g++
+    apt-get remove --purge -y  g++
 
 # Grab gosu for easy step-down from root
 ENV GOSU_VERSION 1.10
@@ -66,7 +66,7 @@ RUN set -x \
 	&& apt-get purge -y --auto-remove ca-certificates wget
 
 # Include composer
-RUN apt-install git rsync zlib1g-dev && \
+RUN apt-get install -y  git rsync zlib1g-dev && \
     docker-php-ext-install zip
 
 ENV COMPOSER_HOME /var/www/.composer
